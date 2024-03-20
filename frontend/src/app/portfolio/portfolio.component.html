@@ -1,0 +1,122 @@
+<ngb-alert
+  *ngIf="this.isAlertSell"
+  class="text-center container mt-3"
+  type="danger"
+>
+  {{ this.tick }} sold successfully.
+</ngb-alert>
+<ngb-alert
+  *ngIf="this.isAlert"
+  class="text-center container mt-3"
+  type="success"
+>
+  {{ this.tick }} bought successfully.
+</ngb-alert>
+<div class="container mt-5 my-5">
+  <h1 style="font-weight: 500; font-size: 40px">My Portfolio</h1>
+  <h3>Money in Wallet: ${{ this.wallet }}</h3>
+</div>
+<div class="container">
+  <ngb-alert
+    [dismissible]="false"
+    *ngIf="this.isNotFound == true"
+    class="text-center"
+    type="warning"
+  >
+    Currently you don't have any stock.
+  </ngb-alert>
+  <div>
+    <div>
+      <div class="card mb-3" *ngFor="let item of this.arrayofarrays">
+        <div
+          class="card-header text-left pb-3 pt-3 text-muted fs-3"
+          (click)="nav(item.Ticker)"
+        >
+          <span class="text-dark" style="font-weight: bold; font-size: x-large"
+            >{{ item.Ticker }}
+          </span>
+          <span>{{ item.CN }}</span>
+        </div>
+        <div class="card-body row">
+          <div class="col-md-6 col-sm-12">
+            <table class="table table-borderless">
+              <tr>
+                <td>Quantity:</td>
+                <td class="text-right">{{ item.Quantity }}</td>
+              </tr>
+              <tr>
+                <td>Avg.Cost/Share:</td>
+                <td class="text-right">{{ item.AvgCost }}</td>
+              </tr>
+              <tr>
+                <td>Total Cost:</td>
+                <td class="text-right">{{ item.TotalCost }}</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-6 col-sm-12">
+            <table class="table table-borderless">
+              <tr>
+                <td>Change:</td>
+                <td
+                  class="text-right"
+                  [style.color]="
+                    item.AvgCost - item.Current > 0
+                      ? 'green'
+                      : red(item.AvgCost - item.Current)
+                  "
+                >
+                  <img
+                    *ngIf="item.AvgCost - item.Current > 0"
+                    src="{{ this.greenArrow }}"
+                  /><img
+                    *ngIf="item.AvgCost - item.Current < 0"
+                    src="{{ this.redArrow }}"
+                  />
+                  {{ item.AvgCost - item.Current | number }}
+                </td>
+              </tr>
+              <tr>
+                <td>Current Price:</td>
+                <td
+                  class="text-right"
+                  [style.color]="
+                    item.AvgCost - item.Current > 0
+                      ? 'green'
+                      : red(item.AvgCost - item.Current)
+                  "
+                >
+                  {{ item.Current | number }}
+                </td>
+              </tr>
+              <tr>
+                <td>Market Value:</td>
+                <td
+                  class="text-right"
+                  [style.color]="
+                    item.AvgCost - item.Current > 0
+                      ? 'green'
+                      : red(item.AvgCost - item.Current)
+                  "
+                >
+                  {{ item.Current * item.Quantity | number }}
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer text-muted text-right">
+          <app-buy-modal
+            [Ticker]="item.Ticker"
+            [TotalCost]="item.TotalCost"
+            [Quantity]="item.Quantity"
+            [AvgCost]="item.AvgCost"
+            [CN]="item.CN"
+            [Current]="item.Current"
+            (parentFunction)="parentFunction($event)"
+          ></app-buy-modal>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

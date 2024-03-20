@@ -1,0 +1,104 @@
+<button type="button" class="btn btn-primary mr-2" (click)="Buy(buyStocks)">
+  Buy
+</button>
+<button type="button" class="btn btn-danger" (click)="Sell(sellStocks)">
+  Sell
+</button>
+<ng-template #buyStocks let-c="close" let-d="dismiss">
+  <div class="modal-header pb-0 mb-0">
+    <h4 class="modal-title" id="modal-basic-title">{{ this.Ticker }}</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      style="outline: none"
+      (click)="d('Cross click')"
+    >
+      <span aria-hidden="false">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>Current Price: {{ this.Current }}</div>
+    <div>Money in Wallet: ${{ this.wallet }}</div>
+    <div class="form-inline row pt-1">
+      <label class="col-sm-2 col-form-label" for="numberInputEx"
+        >Quantity</label
+      >
+      <input
+        class="form-control ml-2 mr-2"
+        min="0"
+        type="number"
+        [(ngModel)]="quantity"
+        id="numberInputEx"
+        mdbInput
+      />
+    </div>
+    <div
+      *ngIf="quantity * this.Current > this.MaxWallet"
+      class="text-danger pt-2 pl-2"
+    >
+      Not enough money in wallet.
+    </div>
+  </div>
+  <div class="modal-footer pb-1 pt-1">
+    <div class="mr-auto">Total: {{ quantity * this.Current }}</div>
+
+    <button
+      [disabled]="
+        quantity < 1 ||
+        quantity * this.Current > this.PaperMoney ||
+        quantity * this.Current > this.MaxWallet
+      "
+      type="button form-control"
+      class="buy-button btn btn-success"
+      (click)="buyStockFunc()"
+    >
+      Buy
+    </button>
+  </div>
+</ng-template>
+<ng-template #sellStocks let-c="close" let-d="dismiss">
+  <div class="modal-header pb-0 mb-0">
+    <h4 class="modal-title">{{ this.Ticker }}</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      style="outline: none"
+      (click)="d('Cross click')"
+    >
+      <span aria-hidden="false">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>Current Price: {{ this.Current }}</div>
+    <div>Money in Wallet: ${{ this.wallet }}</div>
+    <div class="form-inline row pt-1">
+      <label class="col-sm-2 col-form-label" for="numberInputEx"
+        >Quantity</label
+      >
+      <input
+        class="form-control ml-2 mr-2"
+        min="0"
+        type="number"
+        [(ngModel)]="this.quantity"
+        id="numberInputEx"
+        mdbInput
+      />
+    </div>
+    <div *ngIf="quantity > this.Quantity" class="text-danger pt-2 pl-2">
+      You cannot sell the stocks that you dont have.
+    </div>
+  </div>
+  <div class="modal-footer pb-1 pt-1">
+    <div class="mr-auto">Total: {{ quantity * this.Current }}</div>
+    <button
+      [disabled]="this.quantity < 1 || quantity > this.Quantity"
+      type="button form-control"
+      class="buy-button btn btn-danger"
+      (click)="sellStock()"
+    >
+      Sell
+    </button>
+  </div>
+</ng-template>

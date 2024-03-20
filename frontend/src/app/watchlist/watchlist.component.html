@@ -1,0 +1,43 @@
+<div class="container mt-5 my-5">
+  <h1>My Watchlist</h1>
+</div>
+<div class="container">
+  <ngb-alert
+    [dismissible]="false"
+    *ngIf="isNotFound"
+    class="text-center"
+    type="warning"
+  >
+    Currently you don't have any stock in your watchlist.
+  </ngb-alert>
+  <div *ngIf="!isNotFound">
+    <div *ngFor="let item of this.summary">
+      <div class="card mb-3" (click)="nav(item.ticker)">
+        <span class="text-right pr-3 pt-2">
+          <img src="./assets/clear.svg" (click)="remove(item.ticker)" />
+        </span>
+        <div class="card-body row">
+          <div class="col-6">
+            <h2 class="fs-5">{{ item.ticker }}</h2>
+            <p class="text-dark">{{ item.company }}</p>
+          </div>
+          <div
+            class="col-6 text-right"
+            [style.color]="item.change > 0 ? 'green' : 'red'"
+          >
+            <h2>{{ item.current }}</h2>
+            <p class="fs-4">
+              <span
+                ><img *ngIf="item.change > 0" src="{{ this.greenArrow }}" /><img
+                  *ngIf="item.change < 0"
+                  src="{{ this.redArrow }}"
+                />
+              </span>
+              {{ item.change }}<span> ({{ item.percent }}%)</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

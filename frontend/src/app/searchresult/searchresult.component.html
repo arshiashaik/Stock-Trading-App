@@ -1,0 +1,411 @@
+<app-search-bar></app-search-bar>
+
+<!--Aletrs-->
+<ngb-alert
+  *ngIf="this.isInWatchlist && this.isAddWatch"
+  class="text-center container"
+  type="success"
+>
+  {{ this.ticker }} added to Watchlist.
+</ngb-alert>
+<ngb-alert
+  *ngIf="this.isInWatchlist == false && this.isRemoWatch"
+  class="text-center container"
+  type="danger"
+>
+  {{ this.ticker }} removed from Watchlist.
+</ngb-alert>
+<ngb-alert
+  *ngIf="this.isSold && this.isAlertSell"
+  class="text-center container"
+  type="danger"
+>
+  {{ this.ticker }} sold successfully.
+</ngb-alert>
+<ngb-alert
+  *ngIf="this.isBought && this.isAlert"
+  class="text-center container"
+  type="success"
+>
+  {{ this.ticker }} bought successfully.
+</ngb-alert>
+<mat-spinner
+  *ngIf="
+    this.message == 'Fetching..' &&
+    this.isHighcharts == 'Fetching..' &&
+    this.isSumm == 'Fetching..'
+  "
+  class="mt-4 mx-auto"
+  diameter="50"
+></mat-spinner>
+<div
+  class="container mt-4"
+  *ngIf="this.message == 'Fetched' && this.isHighcharts == 'Fetched'"
+>
+  <!-- Ticker Details Section -->
+  <div class="row justify-content-center mt-3" id="heading">
+    <div class="col-4 p-0">
+      <h1 class="text-left" style="margin-bottom: 0px">
+        {{ this.tickerSymbol }}
+        <span (click)="toggleWishList(this.tickerSymbol)" class="pt-0">
+          <img
+            *ngIf="this.inWatchlist"
+            src="{{ this.startFull }}"
+            class="pb-2"
+          /><img
+            *ngIf="!this.inWatchlist"
+            src="{{ this.starEmpty }}"
+            class="pb-2"
+          />
+        </span>
+      </h1>
+      <h3
+        class="text-left text-secondary"
+        style="margin-top: 0px; margin-bottom: 0px"
+      >
+        {{ this.tickerName }}
+      </h3>
+      <p class="text-left" style="margin-top: 0px; word-spacing: 2px">
+        {{ this.tickerExchange }}
+      </p>
+      <div class="text-left my-sm-1">
+        <button
+          type="button"
+          class="btn btn-success mr-2"
+          (click)="Buy(buyStocks)"
+        >
+          Buy
+        </button>
+        <button
+          *ngIf="this.isShow"
+          type="button"
+          class="btn btn-danger"
+          (click)="Sell(sellStocks)"
+        >
+          Sell
+        </button>
+      </div>
+    </div>
+    <div class="col-2 text-center w-md-25 h-md-25 mt-0">
+      <img class="tickerImage" src="{{ this.tickerImage }}" class="img-fluid" />
+    </div>
+    <div class="col-4 p-0">
+      <span [style.color]="this.latest.d > '0' ? 'green' : 'red'">
+        <h1 class="text-right" style="margin-bottom: 0px">
+          {{ this.latest.c.toFixed(2) }}
+        </h1>
+        <h3 class="text-right" style="margin-top: 0px">
+          <img *ngIf="this.latest.d > '0'" src="{{ this.greenArrow }}" /><img
+            *ngIf="this.latest.d < '0'"
+            src="{{ this.redArrow }}"
+          />
+          {{ this.latest.d.toFixed(2) }}({{ this.latest.dp.toFixed(2) }}%)
+        </h3>
+      </span>
+      <p class="text-right sub">{{ this.todaysDateTime }}</p>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <p class="text-success text-center">
+        <span *ngIf="isMarket"> Market is Open </span>
+      </p>
+      <p class="text-danger text-center">
+        <span *ngIf="!isMarket"> Market Closed on {{ this.closed }} </span>
+      </p>
+    </div>
+  </div>
+  <!-- Tabs Section -->
+  <div class="row justify-content-center">
+    <div class="col">
+      <mat-tab-group mat-stretch-tabs animationDuration="0ms">
+        <mat-tab label="Summary">
+          <ng-template matTabContent>
+            <div class="container">
+              <div class="row">
+                <div class="col-md-6 col-sm-12" style="padding-top: 32px">
+                  <div class="row text-dark">
+                    <div class="col-md-6 col-sm-12">
+                      <table
+                        class="summPo"
+                        style="margin-left: auto; margin-right: auto"
+                      >
+                        <tr>
+                          <td><b>High Price:</b></td>
+                          <td class="pl-3">{{ this.high }}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Low Price:</b></td>
+                          <td class="pl-3">{{ this.low }}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Open Price</b></td>
+                          <td class="pl-3">{{ this.open }}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Prev. Close:</b></td>
+                          <td class="pl-3">{{ this.prevC }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                  <br /><br />
+                  <div class="row text-center">
+                    <div class="col pb-4">
+                      <h2><u>About the company</u></h2>
+                    </div>
+                  </div>
+                  <div class="row text-black summPt">
+                    <ul>
+                      <li class="pb-2">
+                        <b class="pr-2">IPO Start Date: </b>{{ this.ipo }}
+                      </li>
+                      <li class="pb-2">
+                        <b class="pr-2">Industry: </b>{{ this.industry }}
+                      </li>
+                      <li class="pb-2">
+                        <b class="pr-2">Webpage: </b>
+                        <a
+                          class="text-primary"
+                          target="_blank"
+                          href="{{ this.webpage }}"
+                          >{{ this.webpage }}</a
+                        >
+                      </li>
+                      <li class="pb-2">
+                        <b class="pr-2">Company Peers: </b><br />
+                        <a
+                          *ngFor="let item of this.peers"
+                          (click)="onPeersClicked(item)"
+                          class="text-primary"
+                          routerLinkActive="active-link"
+                          [routerLinkActiveOptions]="{ exact: true }"
+                          [routerLink]="'search/' + this.ticker"
+                          [routerLinkActive]="['active']"
+                          >{{ item }},
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-md-6 col-sm-12" style="padding-top: 32px">
+                  <div id="summaryChart" style="display: block; width: 100%">
+                    <app-summary-chart
+                      [sumdata]="this.summ"
+                      [color]="this.color"
+                      [ticker]="this.ticker"
+                    ></app-summary-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Top News">
+          <div class="container" id="news-content">
+            <div class="row p-1" *ngIf="this.news">
+              <div
+                class="card col-sm-5 m-2 bg-white mx-auto p-0"
+                *ngFor="let latestnews of this.news"
+              >
+                <div class="card-body row" (click)="openNewsDetail(latestnews)">
+                  <div class="col-md-2 m-0 p-0 my-auto">
+                    <img
+                      class="card-img m-0 my-auto h-100 w-100"
+                      src="{{ latestnews.image }}"
+                      alt="News card image"
+                    />
+                  </div>
+                  <div class="col">
+                    <h3 class="card-title text-black">
+                      {{ latestnews.headline }}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+        <mat-tab label="Charts">
+          <ng-template matTabContent>
+            <div class="container p-2" *ngIf="this.isHighcharts == 'Fetched'">
+              <app-chart-tab
+                class="p-2"
+                [inputvalue]="this.ticker"
+                [parentdata]="this.history"
+              ></app-chart-tab>
+            </div>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Insights">
+          <ng-template matTabContent>
+            <div>
+              <div class="text-center text-dark pt-3">
+                <h2>Social Sentiments</h2>
+              </div>
+              <div class="d-flex justify-content-center">
+                <table class="insights w-50">
+                  <tr class="pt-4 pb-4 table-secondary">
+                    <th class="">{{ this.tickerName }}</th>
+                    <th class="pl-3 pr-3 pt-3 pb-3">Reddit</th>
+                    <th class="pl-3 pr-3 pt-3 pb-3">Twitter</th>
+                  </tr>
+                  <tr>
+                    <th class="pl-3 pr-3 pt-3 pb-3 table-secondary">
+                      Total Mentions
+                    </th>
+                    <td class="pl-3 pr-3 pt-3 pb-3 table-light">
+                      {{ this.totR }}
+                    </td>
+                    <td class="pl-3 pr-3 pt-3 pb-3 table-light">
+                      {{ this.totT }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="pl-3 pr-3 pt-3 pb-3 table-secondary">
+                      Positive Mentions
+                    </th>
+                    <td class="pl-3 pr-3 pt-3 pb-3 table-light">
+                      {{ this.posR }}
+                    </td>
+                    <td class="pl-3 pr-3 pt-3 pb-3 table-light">
+                      {{ this.posT }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th
+                      class="pl-3 pr-3 pt-3 pb-3 table-secondary table-secondary"
+                    >
+                      Negative Mentions
+                    </th>
+                    <td class="pl-3 pr-3 pt-3 pb-3 table-light">
+                      {{ this.negR }}
+                    </td>
+                    <td class="pl-3 pr-3 pt-3 pb-3 table-light">
+                      {{ this.negT }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="container row mt-5">
+                <div class="container col-md-6">
+                  <app-trend-chart [pardata]="this.trends"></app-trend-chart>
+                </div>
+                <div class="container col-md-6">
+                  <h1>
+                    <app-earn-chart [earndata]="this.earn"></app-earn-chart>
+                  </h1>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</div>
+
+<!-- Buy and sell modals -->
+<ng-template #buyStocks let-c="close" let-d="dismiss">
+  <div class="modal-header pb-0 mb-0">
+    <h4 class="modal-title" id="modal-basic-title">{{ this.ticker }}</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      style="outline: none"
+      (click)="d('Cross click')"
+    >
+      <span aria-hidden="false">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>Current Price: {{ this.latest.c }}</div>
+    <div>Money in Wallet: ${{ this.wallet }}</div>
+    <div class="form-inline row pt-1">
+      <label class="col-sm-2 col-form-label" for="numberInputEx"
+        >Quantity</label
+      >
+      <input
+        class="form-control ml-2 mr-2"
+        min="0"
+        type="number"
+        [(ngModel)]="this.quantity"
+        id="numberInputEx"
+        mdbInput
+      />
+    </div>
+    <div
+      *ngIf="quantity * this.latest.c > this.MaxWallet"
+      class="text-danger pt-2 pl-2"
+    >
+      Not enough money in wallet.
+    </div>
+  </div>
+  <div class="modal-footer pb-1 pt-1">
+    <div class="mr-auto">Total: {{ quantity * this.latest.c }}</div>
+
+    <button
+      [disabled]="
+        this.quantity < 1 ||
+        quantity * this.latest.c > this.PaperMoney ||
+        quantity * this.latest.c > this.MaxWallet
+      "
+      type="button form-control"
+      class="buy-button btn btn-success"
+      (click)="buyStockFunc()"
+    >
+      Buy
+    </button>
+  </div>
+</ng-template>
+<ng-template #sellStocks let-c="close" let-d="dismiss">
+  <div class="modal-header pb-0 mb-0">
+    <h4 class="modal-title">{{ this.ticker }}</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      style="outline: none"
+      (click)="d('Cross click')"
+    >
+      <span aria-hidden="false">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>Current Price: {{ this.latest.c }}</div>
+    <div>Money in Wallet: ${{ this.wallet }}</div>
+    <div class="form-inline row pt-1">
+      <label class="col-sm-2 col-form-label" for="numberInputEx"
+        >Quantity</label
+      >
+      <input
+        class="form-control ml-2 mr-2"
+        min="0"
+        type="number"
+        [(ngModel)]="this.quantity"
+        id="numberInputEx"
+        mdbInput
+      />
+    </div>
+    <div
+      *ngIf="quantity > this.portfolio[this.ticker].Quantity"
+      class="text-danger pt-2 pl-2"
+    >
+      You cannot sell the stocks that you dont have.
+    </div>
+  </div>
+  <div class="modal-footer pb-1 pt-1">
+    <div class="mr-auto">Total: {{ quantity * this.latest.c }}</div>
+    <button
+      [disabled]="
+        this.quantity < 1 || quantity > this.portfolio[this.ticker].Quantity
+      "
+      type="button form-control"
+      class="buy-button btn btn-danger"
+      (click)="sellStock()"
+    >
+      Sell
+    </button>
+  </div>
+</ng-template>

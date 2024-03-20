@@ -1,0 +1,94 @@
+<div class="text-center fw-bolder mt-5">
+  <h1>STOCK SEARCH</h1>
+</div>
+<form
+  class="mx-auto"
+  [formGroup]="searchInput"
+  (ngSubmit)="onSubmit(searchInput.value)"
+>
+  <div
+    class="input-group align-baseline rounded rounded-pill pl-3 mb-2"
+    id="search-form-div"
+  >
+    <input
+      type="text"
+      formControlName="tickerSymbol"
+      placeholder="Enter stock ticker symbol"
+      aria-describedby="button-addon1"
+      class="form-control border-0 mt-2 pl-2"
+      [matAutocomplete]="auto"
+    />
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      [displayWith]="displayFn"
+      (optionSelected)="Submit($event)"
+    >
+      <mat-option *ngIf="isLoading"
+        ><mat-spinner diameter="25"></mat-spinner
+      ></mat-option>
+      <mat-option
+        *ngFor="let option of options"
+        [value]="option"
+        class="option"
+      >
+        <b>{{ option.symbol }}</b> | {{ option.description }}
+      </mat-option>
+    </mat-autocomplete>
+    <div class="input-group-append mx-2 border-0 p-0">
+      <button
+        id="search-button"
+        type="submit"
+        class="btn btn-link text-primary m-0 border-0 p-0"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="rgb(104, 88, 242)"
+          class="bi bi-search"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+          />
+        </svg>
+      </button>
+      <button (click)="clearForm()" class="btn" type="button">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="rgb(104, 88, 242)"
+          class="bi bi-x-lg"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"
+          />
+          <path
+            fill-rule="evenodd"
+            d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</form>
+<div class="mt-3 alert">
+  <ngb-alert *ngIf="this.isValid == true" type="danger" (closed)="valid()">
+    <p class="text-center">Please enter a valid ticker</p>
+  </ngb-alert>
+</div>
+<div class="mt-3 alert">
+  <ngb-alert
+    *ngIf="this.isValidTicker == true"
+    type="danger"
+    [dismissible]="false"
+  >
+    <p class="text-center" style="color: black">
+      No data found. Please enter a valid Ticker
+    </p>
+  </ngb-alert>
+</div>
+<!-- (tickerSymbol.invalid && (tickerSymbol.dirty || tickerSymbol.touched)) || -->

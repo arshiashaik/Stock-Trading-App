@@ -1,0 +1,20 @@
+nav {
+  background: #1504b3;
+}
+a:hover {
+  color: #fff !important;
+}
+.navbar-nav {
+  margin-left: auto;
+}
+.nav-link {
+  text-align: right;
+}
+.active {
+  border-color: white;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+.navbar-toggler-icon {
+  color: #fff;
+}
