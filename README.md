@@ -13,3 +13,14 @@ This is a web application for stock trading, where users can buy and sell stocks
 - Watchlist to save favorite stocks
 - Portfolio to view owned stocks and sell them
 - Highcharts is used for data visualization.
+
+## 📽️ Preview
+
+#### Desktop
+
+https://github.com/arshiashaik/Stock-Trading-App/assets/91397846/605d06fa-6116-4421-9ac7-1f0e29197394
+
+#### Mobile
+
+https://github.com/arshiashaik/Stock-Trading-App/assets/91397846/348dbef8-5ef1-4401-98f0-2220c1c9edf8
+
